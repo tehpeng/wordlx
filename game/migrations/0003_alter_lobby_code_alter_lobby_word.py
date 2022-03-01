@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('game', '0002_alter_player_user'),
+        ("game", "0002_alter_player_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='lobby',
-            name='code',
-            field=models.CharField(default='', max_length=8),
+            model_name="lobby",
+            name="code",
+            field=models.CharField(default="", max_length=8),
         ),
         migrations.AlterField(
-            model_name='lobby',
-            name='word',
-            field=models.CharField(default='', max_length=16),
+            model_name="lobby",
+            name="word",
+            field=models.CharField(default="", max_length=16),
         ),
     ]

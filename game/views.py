@@ -1,12 +1,9 @@
 import json
 import random
 import string
-from ast import Try
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from game.models import Game, Lobby, Player
@@ -15,7 +12,12 @@ from game.words import answers, words
 
 def get_gamestate(game):
     lobby = game.lobby
-    body = {"is_public": lobby.is_public, "guesses": game.guesses, "ok":True, "ended":game.ended}
+    body = {
+        "is_public": lobby.is_public,
+        "guesses": game.guesses,
+        "ok": True,
+        "ended": game.ended,
+    }
     if lobby.is_public:
         body["code"] = lobby.code
     return HttpResponse(json.dumps(body))
@@ -24,6 +26,7 @@ def get_gamestate(game):
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         return HttpResponse("Index. Nothing here yet")
+
 
 class AuthView(View):
     def get(self, request, *args, **kwargs):
@@ -37,9 +40,11 @@ class AuthView(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse(json.dumps({"message":"login succesful.", "ok":True}))
+            return HttpResponse(json.dumps({"message": "login succesful.", "ok": True}))
         else:
-            return HttpResponse(json.dumps({"message":"login unsuccesful.", "ok":False}))
+            return HttpResponse(
+                json.dumps({"message": "login unsuccesful.", "ok": False})
+            )
 
         # body = json.loads(request.body)
         # print(body)
@@ -61,10 +66,19 @@ class RegisterView(View):
             )
             player = Player(user=user)
             player.save()
-            return HttpResponse(json.dumps({"message":("user created. username: %s" % user.username), "ok":True}))
+            return HttpResponse(
+                json.dumps(
+                    {
+                        "message": ("user created. username: %s" % user.username),
+                        "ok": True,
+                    }
+                )
+            )
         else:
 
-            return HttpResponse(json.dumps({"message":"try another username", "ok":False}))
+            return HttpResponse(
+                json.dumps({"message": "try another username", "ok": False})
+            )
 
 
 class InitView(View):
@@ -85,6 +99,7 @@ class InitView(View):
             old_lobby.delete()
         except Lobby.DoesNotExist:
             pass
+
         lobby = Lobby(word=random.choice(answers))
         body = json.loads(request.body)
         if body["is_public"]:
@@ -104,10 +119,13 @@ class InitView(View):
         player.save()
         game = Game(player=player, lobby=lobby)
         game.save()
-        response_body = {"message":("game started, answer = %s" % lobby.word), "ok":True}
+        response_body = {
+            "message": f"game started, answer = {lobby.word}",
+            "ok": True,
+        }
         if lobby.is_public:
             response_body["code"] = code
-        return HttpResponse(json.dumps(response_body))
+        return JsonResponse(response_body)
 
 
 class GuessView(View):
@@ -115,21 +133,27 @@ class GuessView(View):
 
         current_user = request.user
         if not current_user.is_authenticated:
-            return HttpResponse(json.dumps({"ok":False, "message":"please log in"}))
+            return HttpResponse(json.dumps({"ok": False, "message": "please log in"}))
         player = Player.objects.get(user=current_user)
         try:
             game = Game.objects.get(player_id=player.id)
         except Game.DoesNotExist:
-            return HttpResponse(json.dumps({"ok":False, "message":"please start a game"}))
+            return HttpResponse(
+                json.dumps({"ok": False, "message": "please start a game"})
+            )
         if game.ended:
-            return HttpResponse(json.dumps({"ok":False, "message":"Start another game"}))
+            return HttpResponse(
+                json.dumps({"ok": False, "message": "Start another game"})
+            )
         body = json.loads(request.body)
         guess = body["guess"]
         word = Lobby.objects.get(game__id=game.id).word
         ans = [[char.upper(), "grey"] for char in guess]
         letters = {}
         if guess not in words:
-            return HttpResponse(json.dumps({"ok":False, "message":"guess not in words"}))
+            return HttpResponse(
+                json.dumps({"ok": False, "message": "guess not in words"})
+            )
         for i in range(5):
             if word[i] == guess[i]:
                 ans[i][1] = "Green"
@@ -160,7 +184,7 @@ class JoinView(View):
     def post(self, request, *args, **kwargs):
         current_user = request.user
         if not current_user.is_authenticated:
-            return HttpResponse(json.dumps({"ok":False, "message":"please log in"}))
+            return HttpResponse(json.dumps({"ok": False, "message": "please log in"}))
         player = Player.objects.get(user=current_user)
         try:
             old_game = Game.objects.get(player__id=player.id)
@@ -178,23 +202,29 @@ class JoinView(View):
         try:
             lobby = Lobby.objects.get(code__exact=body["code"])
         except Lobby.DoesNotExist:
-            return HttpResponse(json.dumps({"ok":False, "message":"lobby does not exist"}))
+            return HttpResponse(
+                json.dumps({"ok": False, "message": "lobby does not exist"})
+            )
         lobby.save()
         player.lobby = lobby
         player.save()
         game = Game(player=player, lobby=lobby)
         game.save()
-        return HttpResponse(json.dumps({"ok":True, "message":"Joinned lobby, game started"}))
+        return HttpResponse(
+            json.dumps({"ok": True, "message": "Joinned lobby, game started"})
+        )
 
 
 class StateView(View):
     def get(self, request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:
-            return HttpResponse(json.dumps({"ok":False, "message":"please log in"}))
+            return HttpResponse(json.dumps({"ok": False, "message": "please log in"}))
         player = Player.objects.get(user=user)
         try:
             game = Game.objects.get(player=player)
         except Game.DoesNotExist:
-            return HttpResponse(json.dumps({"ok":False, "message":"guess not in words"}))
+            return HttpResponse(
+                json.dumps({"ok": False, "message": "guess not in words"})
+            )
         return get_gamestate(game)

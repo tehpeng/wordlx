@@ -9,18 +9,25 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('game', '0003_alter_lobby_code_alter_lobby_word'),
+        ("game", "0003_alter_lobby_code_alter_lobby_word"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='player',
-            name='lobby',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='game.lobby'),
+            model_name="player",
+            name="lobby",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="game.lobby",
+            ),
         ),
         migrations.AlterField(
-            model_name='player',
-            name='user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="player",
+            name="user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

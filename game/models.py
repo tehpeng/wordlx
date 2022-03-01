@@ -9,6 +9,10 @@ class Lobby(models.Model):
     is_public = models.BooleanField(default=False)
 
 
+# player--lobby
+#  (player, lobby)
+
+
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     lobby = models.ForeignKey(Lobby, on_delete=models.SET_NULL, null=True, blank=True)

@@ -6,12 +6,16 @@ from django.urls import reverse
 
 def register(tester, username="dave", password="password", email="dave@davemail.com"):
     body = {"username": username, "password": password, "email": email}
-    return tester.client.post(reverse("game:register"), body, content_type="application/json")
+    return tester.client.post(
+        reverse("game:register"), body, content_type="application/json"
+    )
 
 
 def login(tester, username="dave", password="password"):
     body = {"username": username, "password": password}
-    return tester.client.post(reverse("game:auth"), body, content_type="application/json")
+    return tester.client.post(
+        reverse("game:auth"), body, content_type="application/json"
+    )
 
 
 # def init(tester, username="dave", password="password", is_public=False):

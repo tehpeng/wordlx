@@ -15,31 +15,76 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Lobby',
+            name="Lobby",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('word', models.CharField(max_length=16)),
-                ('code', models.CharField(max_length=8)),
-                ('is_public', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("word", models.CharField(max_length=16)),
+                ("code", models.CharField(max_length=8)),
+                ("is_public", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Player',
+            name="Player",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('lobby', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='game.lobby')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "lobby",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="game.lobby"
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('guesses', models.JSONField(default=list)),
-                ('attempt', models.IntegerField(default=0)),
-                ('ended', models.BooleanField(default=False)),
-                ('lobby', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='game.lobby')),
-                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='game.player')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("guesses", models.JSONField(default=list)),
+                ("attempt", models.IntegerField(default=0)),
+                ("ended", models.BooleanField(default=False)),
+                (
+                    "lobby",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="game.lobby"
+                    ),
+                ),
+                (
+                    "player",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="game.player"
+                    ),
+                ),
             ],
         ),
     ]
