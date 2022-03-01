@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import AuthView, GuessView, IndexView, InitView, RegisterView
+from .views import (
+    AuthView,
+    GuessView,
+    IndexView,
+    InitView,
+    JoinView,
+    RegisterView,
+    StateView,
+)
 
 app_name = "game"
 
@@ -25,4 +33,6 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
     path("init/", InitView.as_view(), name="init"),
     path("guess/", GuessView.as_view(), name="guess"),
+    path("join/", JoinView.as_view(), name="join"),
+    path("state/", StateView.as_view(), name="state"),
 ]
